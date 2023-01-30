@@ -490,8 +490,8 @@ function terrain_smooth(smooth_noise, top_pos, x1, x2, z1, z2)
 					minetest.set_node({x=x, y=y, z=z}, {name="air"})
 					if minetest.get_node({x=x, y=y-1, z=z}).name =="sunset_biomes:old_dirt" then
 						minetest.set_node({x=x, y=y-1, z=z}, {name="old:dirt_with_grass"})
-				end
 					end
+				end
 			end
 		end
 	end
