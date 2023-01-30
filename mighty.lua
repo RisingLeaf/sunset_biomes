@@ -91,6 +91,20 @@ minetest.register_abm({
 		end
 	end
 })
+minetest.register_abm({
+	label = "Spawn Mighty Thing",
+	nodenames = {"sunset_biomes:mighty_dirt_with_mighty_grass"},
+	neighbors = {},
+	interval = 10,
+	chance = 20000,
+	action = function(pos)
+		local tod = minetest.get_timeofday()
+		if tod < 0.2 and tod > 0.8 then
+			return
+		end
+		minetest.add_entity({x=pos.x, y=pos.y+2, z=pos.z}, "sunset_biomes:mighty_thing")
+	end,
+})
 
 minetest.register_node("sunset_biomes:mighty_core", {
 	description = S("Mighty Core"),

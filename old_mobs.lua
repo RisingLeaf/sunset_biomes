@@ -24,6 +24,10 @@ minetest.register_entity("sunset_biomes:old_inhabitant", {
 			return
 		end
 
+		if math.random(1, 25) == 1 then
+			self.object:set_hp(self.object:get_hp() - 1)
+		end
+
 		self.object:set_animation({x = 1, y = 60}, 24, 0)
 		if math.random() < 0.05 then
 			self.walk_dir = {x = math.random(-1, 1), y = 0, z = math.random(-1, 1), z = math.random(-0.1, 0.1)}

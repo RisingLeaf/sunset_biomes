@@ -13,5 +13,6 @@ dofile(mod_path.."/old_torch.lua")
 dofile(mod_path.."/old_mobs.lua")
 
 dofile(mod_path.."/mighty.lua")
+dofile(mod_path.."/mighty_mobs.lua")
 
 dofile(mod_path.."/sky_colors.lua")
