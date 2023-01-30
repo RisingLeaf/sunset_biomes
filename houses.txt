@@ -1,0 +1,101 @@
+-----------------------------------------------------------
+--Houses:
+-----------------------------------------------------------
+
+function terrain_smooth(smooth_noise, top_pos, x1, x2, z1, z2)
+	for x = x1, x2 do
+		for z = z1, z2 do
+			local smooth_val = smooth_noise:get_2d({x=x, y=z})
+			local current_height = top_pos.y - 5
+			local target_height = top_pos.y + ((smooth_val - 0.5))
+			if target_height > current_height then
+				for y = current_height, target_height do
+					minetest.set_node({x=x, y=y, z=z}, {name="old:dirt_with_grass"})
+					if minetest.get_node({x=x, y=y-1, z=z}).name == "old:dirt_with_grass" then
+						minetest.set_node({x=x, y=y-1, z=z}, {name="old:dirt"})
+					end
+				end
+			elseif target_height < current_height then
+				for y = target_height, current_height do
+					minetest.set_node({x=x, y=y, z=z}, {name="air"})
+					if minetest.get_node({x=x, y=y-1, z=z}).name == "old:dirt" then
+						minetest.set_node({x=x, y=y-1, z=z}, {name="old:dirt_with_grass"})
+				end
+					end
+			end
+		end
+	end
+end
+
+minetest.register_on_generated(function(minp, maxp, seed)
+	local perlin_noise = minetest.get_perlin(329, 3, 0.6, 0.007)
+	local biome_threshold = 0.8
+	local offset_distance = 30
+	local density = 0.01
+
+	for i, pos in ipairs(minetest.find_nodes_in_area(minp, maxp, "old:dirt_with_grass")) do
+		local noise = perlin_noise:get_3d(pos)
+		if noise > biome_threshold and math.random() < density then
+			local offset_noise = perlin_noise:get_3d({x = pos.x + offset_distance, y = pos.y, z = pos.z + offset_distance})
+
+			local max_height = minp.y - 10
+			local min_height = maxp.y + 10
+
+			for x = minp.x, maxp.x do
+   				for z = minp.z, maxp.z do
+					local height = min_height
+					for y = minp.y, maxp.y do
+						local node = minetest.get_node({x=x, y=y, z=z})
+						if node.name == "old:dirt_with_grass" then
+							height = y
+							break
+						end
+					end
+					if height > max_height then
+						max_height = height
+					end
+					if height < min_height then
+						min_height = height
+					end
+				end
+			end
+
+			if offset_noise < biome_threshold and max_height - min_height <= 5 then
+				-- Find the top most node
+				local top_pos = {x = pos.x, y = pos.y + 1, z = pos.z}
+				for x = pos.x - 4, pos.x + 4 do
+					for z = pos.z - 4, pos.z + 4 do
+						local height = 0
+						for y = minp.y, maxp.y do
+							local node = minetest.get_node({x=x, y=y, z=z})
+							if node.name == "old:dirt_with_grass" then
+								height = y
+								break
+							end
+						end
+						if height > top_pos.y then
+							top_pos.y = height
+						end
+					end
+				end
+				
+				-- Terraform the area to a flat plateu
+				for x = pos.x - 5, pos.x + 5 do
+					for z = pos.z - 5, pos.z + 5 do
+						minetest.set_node({x = x, y = top_pos.y, z = z}, {name = "old:dirt_with_grass"})
+					end
+				end
+
+				local smooth_noise = minetest.get_perlin(329, 1, 1, 1)
+				terrain_smooth(smooth_noise, top_pos, pos.x - 7, pos.x - 5, pos.z - 7, pos.z + 7)
+				terrain_smooth(smooth_noise, top_pos, pos.x + 5, pos.x + 7, pos.z - 7, pos.z + 7)
+				terrain_smooth(smooth_noise, top_pos, pos.x - 7, pos.x + 7, pos.z - 7, pos.z - 5)
+				terrain_smooth(smooth_noise, top_pos, pos.x - 7, pos.x + 7, pos.z + 5, pos.z + 7)
+
+				
+				-- Place schematic of house at pos
+				minetest.place_schematic({x=pos.x, y=top_pos.y+1, z=pos.z}, minetest.get_modpath("sunset_biomes").."/schematics/old_house.mts", "random", nil, true, "place_center_x, place_center_z")
+			end
+		end
+	end
+end)
