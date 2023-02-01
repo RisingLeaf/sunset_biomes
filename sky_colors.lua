@@ -41,7 +41,7 @@ local function set_sky_color(player, dtime)
 
 	local time = 2 -- time for the color transition
 	if player_trans_times[player:get_player_name()] <= time then
-		local current_sky_color = player:get_sky()
+		local current_sky_color = player:get_sky(true).base_color
 		local current_cloud_color = player:get_clouds().color
 		player_trans_times[player:get_player_name()] = player_trans_times[player:get_player_name()] + dtime
 		if player_trans_times[player:get_player_name()] > time then

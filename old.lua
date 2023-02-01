@@ -111,7 +111,9 @@ minetest.register_abm({
 		if tod > 0.2 and tod < 0.8 then
 			return
 		end
-		minetest.add_entity({x=pos.x, y=pos.y+1, z=pos.z}, "sunset_biomes:old_inhabitant")
+		if minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z}).name == "air" then
+			minetest.add_entity({x=pos.x, y=pos.y+1, z=pos.z}, "sunset_biomes:old_inhabitant")
+		end
 	end,
 })
 
@@ -517,7 +519,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 					for y = minp.y, maxp.y do
 						local node = minetest.get_node({x=x, y=y, z=z})
 						if node.name == "old:dirt_with_grass" then
-							height = y
+							height = y + 1
 							break
 						end
 					end
@@ -553,14 +555,17 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				for x = pos.x - 5, pos.x + 5 do
 					for z = pos.z - 5, pos.z + 5 do
 						minetest.set_node({x = x, y = top_pos.y, z = z}, {name = "old:dirt_with_grass"})
+						if minetest.get_node({x=x, y=top_pos.y-1, z=z}).name == "sunset_biomes:old_dirt_with_old_grass" then
+							minetest.set_node({x=x, y=top_pos.y-1, z=z}, {name="old:dirt"})
+						end
 					end
 				end
 
-				local smooth_noise = minetest.get_perlin(329, 1, 1, 1)
-				terrain_smooth(smooth_noise, top_pos, pos.x - 7, pos.x - 5, pos.z - 7, pos.z + 7)
-				terrain_smooth(smooth_noise, top_pos, pos.x + 5, pos.x + 7, pos.z - 7, pos.z + 7)
-				terrain_smooth(smooth_noise, top_pos, pos.x - 7, pos.x + 7, pos.z - 7, pos.z - 5)
-				terrain_smooth(smooth_noise, top_pos, pos.x - 7, pos.x + 7, pos.z + 5, pos.z + 7)
+				local smooth_noise = minetest.get_perlin(329, 1, 20, 1)
+				terrain_smooth(smooth_noise, top_pos, pos.x - 8, pos.x - 5, pos.z - 8, pos.z + 8)
+				terrain_smooth(smooth_noise, top_pos, pos.x + 5, pos.x + 8, pos.z - 8, pos.z + 8)
+				terrain_smooth(smooth_noise, top_pos, pos.x - 8, pos.x + 8, pos.z - 8, pos.z - 5)
+				terrain_smooth(smooth_noise, top_pos, pos.x - 8, pos.x + 8, pos.z + 5, pos.z + 8)
 
 				
 				-- Place schematic of house at pos

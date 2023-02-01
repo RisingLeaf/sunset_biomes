@@ -92,17 +92,17 @@ minetest.register_abm({
 	end
 })
 minetest.register_abm({
-	label = "Spawn Mighty Thing",
+	label = "Spawn Mighty Jade Sentry",
 	nodenames = {"sunset_biomes:mighty_dirt_with_mighty_grass"},
 	neighbors = {},
 	interval = 10,
-	chance = 20000,
+	chance = 1000,
 	action = function(pos)
 		local tod = minetest.get_timeofday()
-		if tod < 0.2 and tod > 0.8 then
+		if tod < 0.2 or tod > 0.8 then
 			return
 		end
-		minetest.add_entity({x=pos.x, y=pos.y+2, z=pos.z}, "sunset_biomes:mighty_thing")
+		minetest.add_entity({x=pos.x, y=pos.y+2, z=pos.z}, "sunset_biomes:mighty_jade_sentry")
 	end,
 })
 
@@ -118,6 +118,32 @@ minetest.register_node("sunset_biomes:mighty_core", {
 	light_source = default.LIGHT_MAX,
 })
 minetest.register_alias("mighty:core", "sunset_biomes:mighty_core")
+
+-----------------------------------------------------------
+--Ores:
+-----------------------------------------------------------
+minetest.register_node("sunset_biomes:jade_ore", {
+	description = S("Jade Ore"),
+	tiles = {"mighty_stone.png^mineral_jade.png"},
+	groups = {cracky = 1},
+	drop = "sunset_biomes:jade",
+	sounds = default.node_sound_stone_defaults(),
+})
+minetest.register_ore({
+	ore_type       = "scatter",
+	ore            = "sunset_biomes:jade_ore",
+	wherein        = "sunset_biomes:mighty_stone",
+	clust_scarcity = 20 * 20 * 20,
+	clust_num_ores = 12,
+	clust_size     = 3,
+	y_max          = 31000,
+	y_min          = -31000,
+})
+
+minetest.register_craftitem("sunset_biomes:jade", {
+	description = S("Jade"),
+	inventory_image = "jade.png",
+})
 
 
 -----------------------------------------------------------
@@ -136,41 +162,7 @@ minetest.register_biome({
 	y_max = 31000,
 	y_min = 1,
 	heat_point = 70,
-	humidity_point = 70,
-})
-
-minetest.register_biome({
-	name = "mighty_shore",
-	node_top = "mighty:material",
-	depth_top = 1,
-	node_filler = "mighty:material",
-	depth_filler = 3,
-	node_riverbed = "mighty:material",
-	depth_riverbed = 2,
-	node_stone = "mighty:stone",
-	node_dungeon = "mighty:material",
-	y_max = 0,
-	y_min = -1,
-	heat_point = 70,
-	humidity_point = 70,
-})
-
-minetest.register_biome({
-	name = "old_ocean",
-	node_top = "mighty:material",
-	depth_top = 1,
-	node_filler = "mighty:material",
-	depth_filler = 3,
-	node_riverbed = "mighty:material",
-	depth_riverbed = 2,
-	node_cave_liquid = "default:lava_source",
-	node_stone = "mighty:stone",
-	node_dungeon = "mighty:material",
-	vertical_blend = 1,
-	y_max = -2,
-	y_min = -255,
-	heat_point = 70,
-	humidity_point = 70,
+	humidity_point = 10,
 })
 
 minetest.register_biome({
@@ -178,10 +170,10 @@ minetest.register_biome({
 	node_cave_liquid = {"default:lava_source"},
 	node_stone = "mighty:stone",
 	node_dungeon = "material:material",
-	y_max = -256,
+	y_max = -0,
 	y_min = -31000,
 	heat_point = 70,
-	humidity_point = 70,
+	humidity_point = 10,
 })
 
 
@@ -217,7 +209,7 @@ minetest.register_decoration({
 	rotation = "random",
 })
 minetest.register_decoration({
-	name = "mighty_sphere_5",
+	name = "mighty_sphere_7",
 	deco_type = "schematic",
 	place_on = {"mighty:dirt", "mighty:dirt_with_grass"},
 	place_offset_y = -2,
