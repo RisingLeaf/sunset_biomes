@@ -29,7 +29,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	for i, pos in ipairs(minetest.find_nodes_in_area(minp, maxp, "default:dirt_with_grass")) do
 		local should_be_placed = true
 		for _,cp in ipairs(castle_positions) do
-			if distance(cp, pos) < 200 then
+			if distance(cp, pos) < 1000 then
 				should_be_placed = false
 			end
 		end
